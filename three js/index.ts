@@ -6,14 +6,13 @@ var camera: THREE.PerspectiveCamera | THREE.Camera,
     scene: THREE.Object3D<THREE.Event>,
     renderer: THREE.WebGLRenderer
     ;
-function setup(){
+function setup(container: HTMLElement ){
   //defining objects---------------------------------------------------------
-  camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 );
-  camera.position.z = 1001;
+  camera = new THREE.PerspectiveCamera( 70, container.getBoundingClientRect().width /  container.getBoundingClientRect().height, 0.1, 1000 );
+  camera.position.z = 5;
   scene = new THREE.Scene();
-  geometry = new THREE.IcosahedronGeometry(200, 1);
-  material = new THREE.MeshBasicMaterial({ color: 0xfffff, wireframe:
- true, wireframeLinewidth: 2 });
+  geometry = new THREE.BoxGeometry(1,1,1);
+  material = new THREE.MeshBasicMaterial({color: 0x00ff00});
   mesh = new THREE.Mesh(geometry, material);
   console.log(mesh)
   //adding object to the scene------------------------------------------------
@@ -26,14 +25,25 @@ function animation( time: number ) {
   renderer.render( scene, camera );
 }
 export function bootstrapThree(containerId:string){
-setup();
-renderer = new THREE.WebGLRenderer( { antialias: true } );
-renderer.setSize( window.innerWidth, window.innerHeight );
-renderer.setAnimationLoop( animation );
 const container = document.getElementById(containerId)
+if(!container){
+  alert('container is null')
+  return;
+}
+
 //@ts-ignore
 container.style.backgroundColor = '#000000'
-container?.appendChild( renderer.domElement );
+
+if(!renderer){
+  renderer = new THREE.WebGLRenderer( { antialias: true } );
+  renderer.setSize( container.getBoundingClientRect().width, container.getBoundingClientRect().height );
+  renderer.setAnimationLoop( animation );
+  container?.appendChild( renderer.domElement );
+  setup(container);
+}
+
+
+
 
 
 //

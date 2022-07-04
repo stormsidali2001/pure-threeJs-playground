@@ -1,12 +1,18 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
-import { useEffect, useId } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { bootstrapThree } from '../three js'
 const Home: NextPage = () => {
+  const [runOnce,setRunOnce] = useState(false)
   const containerId = useId()
   useEffect(()=>{
-    bootstrapThree(containerId);
+    if(!runOnce){
+
+      bootstrapThree(containerId);
+      setRunOnce(true)
+    }
+    
   },[])
   
   return (
@@ -18,7 +24,7 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <div id = {containerId}></div>
+        <div className={styles.threeJsContainer} id = {containerId}></div>
       </main>
 
       <footer className={styles.footer}>
