@@ -1,11 +1,15 @@
 import * as THREE from 'three'
+import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
 var camera: THREE.PerspectiveCamera | THREE.Camera,
     planGeometry,
     planeMaterial,
     planeMesh: THREE.Object3D<THREE.Event> | THREE.Mesh<THREE.IcosahedronGeometry, THREE.MeshBasicMaterial>,
     scene: THREE.Object3D<THREE.Event>,
-    renderer: THREE.WebGLRenderer
+    renderer: THREE.WebGLRenderer,
+    controls: OrbitControls
     ;
+
+// gui.add(world.plane,'width',1,500)
 function setup(container: HTMLElement ){
   //defining objects---------------------------------------------------------
   camera = new THREE.PerspectiveCamera( 70, container.getBoundingClientRect().width /  container.getBoundingClientRect().height, 0.1, 1000 );
@@ -18,9 +22,12 @@ function setup(container: HTMLElement ){
   flatShading:THREE.FlatShading,
   });
   planeMesh = new THREE.Mesh(planGeometry, planeMaterial);
+  //lights------------------------
   const light = new THREE.DirectionalLight(0xffffff,1)
   light.position.set(0,0,1);
-  console.log(planeMesh)
+  const backLight = new THREE.DirectionalLight(0xffffff,1)
+  backLight.position.set(0,0,-1);
+
   //@ts-ignore
   const arr:Number[] = planeMesh.geometry.attributes.position.array;
   console.log(arr)
@@ -32,15 +39,17 @@ function setup(container: HTMLElement ){
     arr[i+2] =z + Math.random();
   }
 
-  
+   controls = new  OrbitControls( camera, renderer.domElement );
+
   //adding object to the scene------------------------------------------------
-  scene.add( planeMesh ,light);
+  scene.add( planeMesh ,light,backLight);
 
 }
 function animation( time: number ) {
   // planeMesh.rotation.x = time/2000
   // planeMesh.rotation.y = 0;
   renderer.render( scene, camera );
+  controls.update();
 }
 export function bootstrapThree(containerId:string){
 const container = document.getElementById(containerId)
