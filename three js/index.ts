@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { Raycaster } from 'three';
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
 var camera: THREE.PerspectiveCamera | THREE.Camera,
     planGeometry,
@@ -6,7 +7,12 @@ var camera: THREE.PerspectiveCamera | THREE.Camera,
     planeMesh: THREE.Object3D<THREE.Event> | THREE.Mesh<THREE.IcosahedronGeometry, THREE.MeshBasicMaterial>,
     scene: THREE.Object3D<THREE.Event>,
     renderer: THREE.WebGLRenderer,
-    controls: OrbitControls
+    controls: OrbitControls,
+    raycaster:Raycaster,
+    mouse:{x:number,y:number} = {
+      x:0,
+      y:0
+    }
     ;
 
 // gui.add(world.plane,'width',1,500)
@@ -17,9 +23,12 @@ function setup(container: HTMLElement ){
   scene = new THREE.Scene();
   planGeometry = new THREE.PlaneGeometry(5,5,10,10);
    
-  planeMaterial = new THREE.MeshPhongMaterial({color: 0xff0000,side:THREE.DoubleSide,
+  planeMaterial = new THREE.MeshPhongMaterial({
+    // color: 0xff0000,
+    side:THREE.DoubleSide,
      //@ts-ignore
   flatShading:THREE.FlatShading,
+  vertexColors:true
   });
   planeMesh = new THREE.Mesh(planGeometry, planeMaterial);
   //lights------------------------
@@ -38,8 +47,22 @@ function setup(container: HTMLElement ){
     //@ts-ignore
     arr[i+2] =z + Math.random();
   }
+   //@ts-ignore
+  const count:number = planeMesh.geometry.attributes.position.count;
+  const colors = [];
+  for(let i = 0;i<count;i++){
+    colors.push(1,0,0)
+  }
+     //@ts-ignore
+  planeMesh.geometry.setAttribute("color",
+    new THREE.Float32BufferAttribute(colors,3),
+    
+  )
+
+
 
    controls = new  OrbitControls( camera, renderer.domElement );
+   raycaster = new Raycaster();
 
   //adding object to the scene------------------------------------------------
   scene.add( planeMesh ,light,backLight);
@@ -48,6 +71,23 @@ function setup(container: HTMLElement ){
 function animation( time: number ) {
   // planeMesh.rotation.x = time/2000
   // planeMesh.rotation.y = 0;
+  raycaster.setFromCamera(mouse,camera)
+  const intersects = raycaster.intersectObject(planeMesh)
+  //returns an array of intersections (the ray can intersect with many parts of the the same object )
+  //each object on the array have some informations about the intersection distance , object touched by the ray ,...
+  if(intersects.length > 0){
+    //@ts-ignore
+    const {color} = intersects[0].object.geometry.attributes;
+    color.setX(intersects[0].face?.a,0)
+    color.setX(intersects[0].face?.b,0)
+    color.setX(intersects[0].face?.c,0)
+  
+   
+    //@ts-ignore
+    color.needsUpdate = true
+    //@ts-ignore
+  
+  }
   renderer.render( scene, camera );
   controls.update();
 }
@@ -74,5 +114,14 @@ if(!renderer){
 
 
 //
+container.addEventListener('mousemove',e=>{
+  const {x,y,width,height} = container.getBoundingClientRect();
+  const normalized_x = 2*((e.clientX - container.getBoundingClientRect().x)/width)-1;
+  const normalized_y = -2*((e.clientY - container.getBoundingClientRect().y)/height) +1;
+  mouse = {
+    x:normalized_x,
+    y:normalized_y
+  }
 
+})
 }
