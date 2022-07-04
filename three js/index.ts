@@ -12,16 +12,34 @@ function setup(container: HTMLElement ){
   camera.position.z = 5;
   scene = new THREE.Scene();
   planGeometry = new THREE.PlaneGeometry(5,5,10,10);
-  planeMaterial = new THREE.MeshBasicMaterial({color: 0xff0000,side:THREE.DoubleSide});
+   
+  planeMaterial = new THREE.MeshPhongMaterial({color: 0xff0000,side:THREE.DoubleSide,
+     //@ts-ignore
+  flatShading:THREE.FlatShading,
+  });
   planeMesh = new THREE.Mesh(planGeometry, planeMaterial);
+  const light = new THREE.DirectionalLight(0xffffff,1)
+  light.position.set(0,0,1);
   console.log(planeMesh)
+  //@ts-ignore
+  const arr:Number[] = planeMesh.geometry.attributes.position.array;
+  console.log(arr)
+  for(let i=0;i<arr.length;i+=3){
+    const x = arr[i];
+    const y = arr[i+1];
+    const z = arr[i+2];
+    //@ts-ignore
+    arr[i+2] =z + Math.random();
+  }
+
+  
   //adding object to the scene------------------------------------------------
-  scene.add( planeMesh );
+  scene.add( planeMesh ,light);
 
 }
 function animation( time: number ) {
-  planeMesh.rotation.x = time/2000
-  planeMesh.rotation.y = 0;
+  // planeMesh.rotation.x = time/2000
+  // planeMesh.rotation.y = 0;
   renderer.render( scene, camera );
 }
 export function bootstrapThree(containerId:string){
