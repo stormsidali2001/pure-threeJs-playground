@@ -39,32 +39,20 @@ export class TerainWithSky{
         this._camera.rotation.x =  -45 * Math.PI / 180;
 
         this._scene = new THREE.Scene();
+        //  this._scene.fog = new THREE.FogExp2(0x9db3b5, 0.800);
 
         
-        let light:THREE.DirectionalLight | THREE.AmbientLight = new THREE.DirectionalLight(0xFFFFFF, 1.0);
-        light.position.set(20, 100, 10);
-        light.target.position.set(0, 0, 0);
+        var light = new THREE.DirectionalLight(0xf6e86d, 1);
         light.castShadow = true;
-        light.shadow.bias = -0.001;
-        light.shadow.mapSize.width = 2048;
-        light.shadow.mapSize.height = 2048;
-        light.shadow.camera.near = 0.1;
-        light.shadow.camera.far = 500.0;
-        light.shadow.camera.near = 0.5;
-        light.shadow.camera.far = 500.0;
-        light.shadow.camera.left = 100;
-        light.shadow.camera.right = -100;
-        light.shadow.camera.top = 100;
-        light.shadow.camera.bottom = -100;
+        light.position.set(500, 1500, 1000);     
         this._scene.add(light);
 
-        light = new THREE.AmbientLight(0x101010);
-        this._scene.add(light);
+      
 
         const plane = new THREE.Mesh(
                       new THREE.PlaneGeometry(2000, 2000, 20, 20),
                       new THREE.MeshStandardMaterial({
-                              color:  0x9db3b5,
+                              color:  0xFFFFFF,
                          })
                 );
         plane.castShadow = false;
@@ -72,12 +60,11 @@ export class TerainWithSky{
         plane.rotation.x = -Math.PI / 2;
         this._scene.add(plane);
         const building_geo =  new THREE.BoxGeometry(1, 1, 1).applyMatrix4(new THREE.Matrix4().makeTranslation(0,0.5,0));
-        const building_mat =   new THREE.MeshStandardMaterial({
-            color: 0xFFFFFF,
-        })
+        const building_mat =   new THREE.MeshPhongMaterial({ color:
+            0xcccccc})
        
 
-        
+
         for(let i = 0;i<100;i++){
             const building = new THREE.Mesh(building_geo,building_mat);
             building.castShadow = true;
