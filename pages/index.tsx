@@ -2,17 +2,23 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import { useEffect, useId, useState } from 'react'
+import { TerainWithSky } from '../three js/TerainWithSky'
 
 const Home: NextPage = () => {
   const [runOnce,setRunOnce] = useState(false)
   const containerId = useId()
+  const [three,setThree] = useState<TerainWithSky | null>(null)
   useEffect(()=>{
-    if(!runOnce){
-   
+    if(!runOnce || !three){
+      const container = document.getElementById(containerId)
+      if(container){
+        setThree(new TerainWithSky(container))
+      }  
       setRunOnce(true)
     }
     
   },[])
+  
   
   return (
     <div className={styles.container}>
