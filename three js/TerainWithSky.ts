@@ -39,7 +39,6 @@ export class TerainWithSky{
         this._camera.rotation.x =  -45 * Math.PI / 180;
 
         this._scene = new THREE.Scene();
-        //  this._scene.fog = new THREE.FogExp2(0x9db3b5, 0.800);
 
         
         var light = new THREE.DirectionalLight(0xf6e86d, 1);
