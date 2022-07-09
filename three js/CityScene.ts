@@ -1,14 +1,14 @@
 import * as THREE from 'three'
 import { Camera } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-export class TerainWithSky{
+export class CityScene{
     private static _threejs: THREE.WebGLRenderer | undefined;
     private _scene: any;
     private _container: HTMLElement | undefined;
     private _camera: THREE.PerspectiveCamera | undefined ;
     private _controls: OrbitControls | undefined;
     constructor(container:HTMLElement){
-        if(TerainWithSky._threejs){
+        if(CityScene._threejs){
             console.warn("an instance of the rendrer already exist")
             return;
         }
@@ -18,12 +18,12 @@ export class TerainWithSky{
     _initialize(){
         if(!this._container) return;
         const {width,height} = this._container.getBoundingClientRect();
-        TerainWithSky._threejs = new THREE.WebGLRenderer({
+        CityScene._threejs = new THREE.WebGLRenderer({
             antialias: true,
           });
-        TerainWithSky._threejs.shadowMap.type = THREE.PCFSoftShadowMap;
-        TerainWithSky._threejs.setPixelRatio(window.devicePixelRatio);
-        TerainWithSky._threejs.setSize(width, height);
+        CityScene._threejs.shadowMap.type = THREE.PCFSoftShadowMap;
+        CityScene._threejs.setPixelRatio(window.devicePixelRatio);
+        CityScene._threejs.setSize(width, height);
         
 
         window.addEventListener('resize', () => {
@@ -61,9 +61,6 @@ export class TerainWithSky{
         const building_geo =  new THREE.BoxGeometry(1, 1, 1).applyMatrix4(new THREE.Matrix4().makeTranslation(0,0.5,0));
         const building_mat =   new THREE.MeshPhongMaterial({ color:
             0xcccccc})
-       
-
-
         for(let i = 0;i<100;i++){
             const building = new THREE.Mesh(building_geo,building_mat);
             building.castShadow = true;
@@ -77,29 +74,24 @@ export class TerainWithSky{
             this._scene.add(building);
 
         }
-     
-
-
         
-
-       
-      this._controls = new OrbitControls(this._camera,TerainWithSky._threejs.domElement)
+      this._controls = new OrbitControls(this._camera,CityScene._threejs.domElement)
       this._controls.update()
       
-       TerainWithSky._threejs.setAnimationLoop(this._animation.bind(this))
+       CityScene._threejs.setAnimationLoop(this._animation.bind(this))
        console.log('1')
-      this._container.appendChild(TerainWithSky._threejs.domElement)
+      this._container.appendChild(CityScene._threejs.domElement)
     }
     private _animation(){
          if(!this._controls) return
-         TerainWithSky._threejs?.render(this._scene,this._camera as Camera)
+         CityScene._threejs?.render(this._scene,this._camera as Camera)
          this._controls.update()
     }
     private _OnWindowResize() {
-        if(!this._camera || !TerainWithSky._threejs || !this._container) return;
+        if(!this._camera || !CityScene._threejs || !this._container) return;
        const {height,width} = this._container.getBoundingClientRect();
        this._camera.aspect = width / height;
        this._camera.updateProjectionMatrix();
-       TerainWithSky._threejs.setSize(width, height);
+       CityScene._threejs.setSize(width, height);
     }
 }

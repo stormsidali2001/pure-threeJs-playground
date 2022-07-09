@@ -2,17 +2,17 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import { useEffect, useId, useState } from 'react'
-import { TerainWithSky } from '../three js/TerainWithSky'
+import { CityScene } from '../three js/CityScene'
 
 const Home: NextPage = () => {
   const [runOnce,setRunOnce] = useState(false)
   const containerId = useId()
-  const [three,setThree] = useState<TerainWithSky | null>(null)
+  const [three,setThree] = useState<CityScene | null>(null)
   useEffect(()=>{
     if(!runOnce || !three){
       const container = document.getElementById(containerId)
       if(container){
-        setThree(new TerainWithSky(container))
+        setThree(new CityScene(container))
       }  
       setRunOnce(true)
     }
